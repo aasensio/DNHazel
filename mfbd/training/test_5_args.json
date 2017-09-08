@@ -1,0 +1,1 @@
+{"output": "test", "epochs": 10, "noise": 0.0, "depth": 5, "kernels": 64, "action": "start", "ninputs": 12, "lr": 0.0001, "lr_multiplier": 1.0, "batchsize": 32}

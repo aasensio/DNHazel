@@ -1,0 +1,1 @@
+{"output": "networks/encdec_relu", "epochs": "20", "noise": 0.0, "depth": "15", "kernels": "32", "action": "start", "model": "encdec", "activation": "relu", "lr": "5e-4", "lr_multiplier": "0.98", "batchsize": "32"}

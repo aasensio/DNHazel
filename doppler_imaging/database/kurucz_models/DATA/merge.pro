@@ -1,0 +1,498 @@
+; Merge the atomic linelist with the CO linelist
+pro merge_co, atomic_linelist, mol_linelist, out_linelist
+
+	n_atomic = file_lines(atomic_linelist)
+	n_mol = file_lines(mol_linelist)
+
+; Read both linelists
+	print, 'Reading atomic linelist...'
+	str_atomic = strarr(n_atomic)
+	openr,2,atomic_linelist
+	readf,2,str_atomic
+	close,2
+
+	lambda_atomic = strmid(str_atomic,0,11)
+
+	print, 'Reading CO linelist...'
+	str_mol = strarr(n_mol)
+	openr,2,mol_linelist
+	readf,2,str_mol
+	close,2
+
+	lambda_mol = strmid(str_mol,0,10)
+
+	str_mol_new = str_mol
+
+; First transform the molecular linelist to the atomic format
+	en = 0.d0
+	enp = 0.d0
+	j = 0.d0
+	jp = 0.d0
+	wl = 0.d0
+	loggf = 0.d0
+	e = ''
+	ep = ''
+	sp = ''
+	spp = ''
+	ld = ''
+	ldp = ''
+
+	PH = 6.62606876d-27
+	PI = !DPI
+	PE = 4.8032d-10
+	PME = 9.10938188d-28
+	PMP = 1.67262158d-24
+	NUCLEAR_MAGNETON = PE*PH/(2.d0*PI*PMP)
+	BOHR_MAGNETON = PE*PH/(2.d0*PI*PME)
+	
+	for i = 0L, n_mol-1 do begin
+		s = str_mol[i]
+		reads,s,FORMAT='(F10.4,F7.3,F5.1,F10.3,F5.1,F11.3,I4,A1,I2,A1,I1,3X,A1,I2,A1,I1,3X,I2)',$
+			wl,loggf,J,En,Jp,Enp,code,e,v,ld,sp,ep,vp,ldp,spp,iso
+
+		wlength = wl
+		lgf = loggf
+		elem = 0.01
+		e_low = En
+		j_low = J
+		label_low = ''
+
+		e_up = Enp
+		j_up = Jp
+		label_up = ''
+		gamma_rad = 0.d0
+		gamm_stark = 0.d0
+		vdw_damp = 0.d0
+		reference = ''
+		nonlte_up = 0.0
+		nonlte_low = 0.0
+		isot = 0.0
+		hyperf_str = 0.0
+		isot2 = 0.0
+		isot_ab = 0.0
+		hpf_low = 0.0
+		hpf_up = 0.0
+		hpff_low = 0.0
+		hpflow_c = 0.0
+		hpff_up = 0.0
+		hpfup_c = 0.0
+		line_str = 0.0
+		autoion = 0.0
+		isot_shift = 0
+
+; Compute the Lande factors
+		lande_up = -0.2689d0 * NUCLEAR_MAGNETON / BOHR_MAGNETON * 1000
+		lande_low = -0.2689d0 * NUCLEAR_MAGNETON / BOHR_MAGNETON * 1000
+
+		s2 = string(FORMAT='(F11.4,F7.3,F6.2,F12.3,F6.1,1X,A10,F12.3,F6.1,1X,A10,3F6.2,A4,2I2,I3,F6.3,I3,F6.3,2I5,1X,A1,A1,1X,A1,A1,i1,A3,2I5,I6)',$
+			wlength, lgf, elem, e_low, j_low, label_low,$
+				e_up, j_up, label_up, gamma_rad, gamm_stark, vdw_damp, reference, nonlte_up,$
+				nonlte_low, isot, hyperf_str, isot2, isot_ab, hpf_low, hpf_up, hpff_low,$
+				hpflow_c, hpff_up, hpfup_c, line_str, autoion, lande_up, lande_low, isot_shift)
+
+		str_mol_new[i] = s2
+
+		if (i / 1000 eq i / 1000.d0) then begin
+			print, i,n_mol
+		endif
+		
+	endfor
+
+	str = [str_atomic, str_mol_new]
+	lambda = [lambda_atomic, lambda_mol]
+
+	lambda = double([lambda_atomic, lambda_mol])
+
+	ind = sort(lambda)
+
+	str_ordered = str[ind]
+
+	n_total = n_elements(str_ordered)
+
+	openw,2,out_linelist,width=200
+	for i = 0L, n_total-1 do begin
+		printf,2,str_ordered[i]
+	endfor
+	close,2
+
+
+end
+
+; Merge the atomic linelist with the CO linelist
+pro merge_oh, atomic_linelist, mol_linelist, out_linelist
+
+	n_atomic = file_lines(atomic_linelist)
+	n_mol = file_lines(mol_linelist)
+
+; Read both linelists
+	print, 'Reading atomic linelist...'
+	str_atomic = strarr(n_atomic)
+	openr,2,atomic_linelist
+	readf,2,str_atomic
+	close,2
+
+	lambda_atomic = strmid(str_atomic,0,11)
+
+	print, 'Reading OH linelist...'
+	str_mol = strarr(n_mol)
+	openr,2,mol_linelist
+	readf,2,str_mol
+	close,2
+
+	lambda_mol = strmid(str_mol,0,10)
+
+	str_mol_new = str_mol
+
+; First transform the molecular linelist to the atomic format
+	en = 0.d0
+	enp = 0.d0
+	j = 0.d0
+	jp = 0.d0
+	wl = 0.d0
+	loggf = 0.d0
+	el = ''
+	eu = ''
+	su = ''
+	sl = ''
+	ld = ''
+	ldp = ''
+
+	PH = 6.62606876d-27
+	PI = !DPI
+	PE = 4.8032d-10
+	PME = 9.10938188d-28
+	PMP = 1.67262158d-24
+	NUCLEAR_MAGNETON = PE*PH/(2.d0*PI*PMP)
+	BOHR_MAGNETON = PE*PH/(2.d0*PI*PME)
+
+	for i = 0L, n_mol-1 do begin
+		s = str_mol[i]
+		reads,s,FORMAT='(F10.4,F7.3,F5.1,F10.3,F5.1,F11.3,I4,A1,I2,A1,I1,3X,A1,I2,A1,I1,3X,I2)',$
+			wl,loggf,Jl,Enl,Ju,Enu,code,el,vl,sl,il,eu,vu,su,iu,iso
+
+		wlength = wl
+		lgf = loggf
+		elem = 0.02
+		e_low = abs(Enl)
+		j_low = Jl
+		label_low = ''
+
+		e_up = abs(Enu)
+		j_up = Ju
+		label_up = ''
+		gamma_rad = 0.d0
+		gamm_stark = 0.d0
+		vdw_damp = 0.d0
+		reference = ''
+		nonlte_up = 0.0
+		nonlte_low = 0.0
+		isot = 0.0
+		hyperf_str = 0.0
+		isot2 = 0.0
+		isot_ab = 0.0
+		hpf_low = 0.0
+		hpf_up = 0.0
+		hpff_low = 0.0
+		hpflow_c = 0.0
+		hpff_up = 0.0
+		hpfup_c = 0.0
+		line_str = 0.0
+		autoion = 0.0
+		isot_shift = 0
+
+; Compute the Lande factors
+		if (eu eq 'X') then L_low = 1.d0
+		if (eu eq 'A') then L_low = 0.d0
+
+		if (el eq 'X') then L_up = 1.d0
+		if (el eq 'A') then L_up = 0.d0
+
+		sigma_up = 0.5d0
+		sigma_low = 0.5d0
+
+		if (iu eq 1) then begin
+			N_up = Ju - 0.5d0
+		endif else begin
+			N_up = Ju + 0.5d0
+		endelse
+
+		if (il eq 1) then begin
+			N_low = Jl - 0.5d0
+		endif else begin
+			N_low = Jl + 0.5d0
+		endelse
+
+		lande_up = 1000.d0 * lande_caseb(Ju, N_up, Sigma_up, L_up)
+		lande_low = 1000.d0 * lande_caseb(Jl, N_low, Sigma_low, L_low)
+
+		if (finite(lande_up) eq 0) then lande_up = 0.d0
+		if (finite(lande_low) eq 0) then lande_low = 0.d0
+
+		s2 = string(FORMAT='(F11.4,F7.3,F6.2,F12.3,F6.1,1X,A10,F12.3,F6.1,1X,A10,3F6.2,A4,2I2,I3,F6.3,I3,F6.3,2I5,1X,A1,A1,1X,A1,A1,i1,A3,2I5,I6)',$
+			wlength, lgf, elem, e_low, j_low, label_low,$
+				e_up, j_up, label_up, gamma_rad, gamm_stark, vdw_damp, reference, nonlte_up,$
+				nonlte_low, isot, hyperf_str, isot2, isot_ab, hpf_low, hpf_up, hpff_low,$
+				hpflow_c, hpff_up, hpfup_c, line_str, autoion, lande_up, lande_low, isot_shift)
+
+		str_mol_new[i] = s2
+
+		if (i / 1000 eq i / 1000.d0) then begin
+			print, i,n_mol
+		endif
+
+	endfor
+
+	str = [str_atomic, str_mol_new]
+	lambda = [lambda_atomic, lambda_mol]
+
+	lambda = double([lambda_atomic, lambda_mol])
+
+	ind = sort(lambda)
+
+	str_ordered = str[ind]
+
+	n_total = n_elements(str_ordered)
+
+	openw,2,out_linelist,width=200
+	for i = 0L, n_total-1 do begin
+		printf,2,str_ordered[i]
+	endfor
+	close,2
+
+	stop
+
+end
+
+; Merge the atomic linelist with the TiO linelist
+pro merge_tio, atomic_linelist, mol_linelist, out_linelist
+
+	n_atomic = file_lines(atomic_linelist)
+	n_mol = file_lines(mol_linelist)
+
+; Read both linelists
+	print, 'Reading atomic linelist...'
+	str_atomic = strarr(n_atomic)
+	openr,2,atomic_linelist
+	readf,2,str_atomic
+	close,2
+
+	lambda_atomic = strmid(str_atomic,0,11)
+
+	print, 'Reading TiO linelist...'
+	str_mol = strarr(n_mol)
+	openr,2,mol_linelist
+	readf,2,str_mol
+	close,2
+
+	lambda_mol = strmid(str_mol,0,14)
+	lambda_mol = string(float(lambda_mol)*0.1)
+
+	str_mol_new = str_mol
+
+; First transform the molecular linelist to the atomic format
+	wl = 0.d0
+	gf = 0.d0
+	El = 0.d0
+	vl = 0
+	Jl = 0.d0
+	Nl = 0.d0
+	syml = 0
+	Eu = 0.d0
+	vu = 0
+	Ju = 0.d0
+	Nu = 0.d0
+	symu = 0
+	gamrad = 0.d0
+	tran = ''
+	
+	PH = 6.62606876d-27
+	PI = !DPI
+	PE = 4.8032d-10
+	PME = 9.10938188d-28
+	PMP = 1.67262158d-24
+	NUCLEAR_MAGNETON = PE*PH/(2.d0*PI*PMP)
+	BOHR_MAGNETON = PE*PH/(2.d0*PI*PME)
+
+	for i = 0L, n_mol-1 do begin
+		s = str_mol[i]
+		reads,s,FORMAT='(F14.4,1X,E12.6,1X,F11.4,I4,F6.1,F6.1,I3,F12.4,I4,F6.1,F6.1,I3,E13.6,2X,A14)',$
+			wl,gf,El,vl,Jl,Nl,syml,Eu,vu,Ju,Nu,symu,gamrad,tran
+			
+		wlength = wl/10.0
+		lgf = alog10(gf)
+		elem = 0.04
+		e_low = El
+		j_low = Jl
+ 		label_low = strmid(tran, 4, 1)
+ 		label_up = strmid(tran, 6, 1)
+
+		e_up = Eu
+		j_up = Ju
+		gamma_rad = 0.d0
+		gamm_stark = 0.d0
+		vdw_damp = 0.d0
+		reference = ''
+		nonlte_up = 0.0
+		nonlte_low = 0.0
+		isot = 0.0
+		hyperf_str = 0.0
+		isot2 = 0.0
+		isot_ab = 0.0
+		hpf_low = 0.0
+		hpf_up = 0.0
+		hpff_low = 0.0
+		hpflow_c = 0.0
+		hpff_up = 0.0
+		hpfup_c = 0.0
+		line_str = 0.0
+		autoion = 0.0
+		isot_shift = 0
+		
+; Compute the Lande factors
+		case (label_low) of
+			'X':  begin
+						L_low = 2.d0
+						Sigma_low = 1.d0
+					end
+			'C':  begin
+						L_low = 2.d0
+						Sigma_low = 1.d0
+					end
+			'c':  begin
+						L_low = 3.d0
+						Sigma_low = 0.d0
+					end
+			'a':  begin
+						L_low = 2.d0
+						Sigma_low = 0.d0
+					end
+			'B':  begin
+						L_low = 1.d0
+						Sigma_low = 1.d0
+					end
+			'A':  begin
+						L_low = 3.d0
+						Sigma_low = 1.d0
+					end
+			'E':  begin
+						L_low = 1.d0
+						Sigma_low = 1.d0
+					end
+			'b':  begin
+						L_low = 1.d0
+						Sigma_low = 0.d0
+					end
+			'd':  begin
+						L_low = 0.d0
+						Sigma_low = 0.d0
+					end
+			else: begin
+						L_low = 0.d0
+						Sigma_low = 0.d0
+					end 
+		endcase
+		
+		case (label_up) of
+			'X':  begin
+						L_up = 2.d0
+						Sigma_up = 1.d0
+					end
+			'C':  begin
+						L_up = 2.d0
+						Sigma_up = 1.d0
+					end
+			'c':  begin
+						L_up = 3.d0
+						Sigma_up = 0.d0
+					end
+			'a':  begin
+						L_up = 2.d0
+						Sigma_up = 0.d0
+					end
+			'B':  begin
+						L_up = 1.d0
+						Sigma_up = 1.d0
+					end
+			'A':  begin
+						L_up = 3.d0
+						Sigma_up = 1.d0
+					end
+			'E':  begin
+						L_up = 1.d0
+						Sigma_up = 1.d0
+					end
+			'b':  begin
+						L_up = 1.d0
+						Sigma_up = 0.d0
+					end
+			'd':  begin
+						L_up = 0.d0
+						Sigma_up = 0.d0
+					end
+			else: begin
+						L_up = 0.d0
+						Sigma_up = 0.d0
+					end 
+		endcase
+				
+		lande_up = (L_up+2.d0*Sigma_up)*(L_up+Sigma_up) / (j_up*(j_up+1.d0))
+		lande_low = (L_low+2.d0*Sigma_low)*(L_low+Sigma_low) / (j_low*(j_low+1.d0))
+				
+		if (abs(lande_up) lt 0.01) then begin
+			lande_up = 0.d0
+		endif
+		
+		if (abs(lande_low) lt 0.01) then begin
+			lande_low = 0.d0
+		endif
+		
+		print, wlength, lande_up, lande_low
+		
+		lande_up = lande_up * 1000
+		lande_low = lande_low * 1000
+
+		if (finite(lande_up) eq 0) then lande_up = 0.d0
+		if (finite(lande_low) eq 0) then lande_low = 0.d0
+
+		s2 = string(FORMAT='(F11.4,F7.3,F6.2,F12.3,F6.1,1X,A10,F12.3,F6.1,1X,A10,3F6.2,A4,2I2,I3,F6.3,I3,F6.3,2I5,1X,A1,A1,1X,A1,A1,i1,A3,2I5,I6)',$
+			wlength, lgf, elem, e_low, j_low, label_low,$
+				e_up, j_up, label_up, gamma_rad, gamm_stark, vdw_damp, reference, nonlte_up,$
+				nonlte_low, isot, hyperf_str, isot2, isot_ab, hpf_low, hpf_up, hpff_low,$
+				hpflow_c, hpff_up, hpfup_c, line_str, autoion, lande_up, lande_low, isot_shift)
+
+		str_mol_new[i] = s2
+
+		if (i / 1000 eq i / 1000.d0) then begin
+			print, i,n_mol
+		endif
+
+	endfor
+
+	str = [str_atomic, str_mol_new]
+	lambda = [lambda_atomic, lambda_mol]
+
+	lambda = double([lambda_atomic, lambda_mol])
+
+	ind = sort(lambda)
+
+	str_ordered = str[ind]
+
+	n_total = n_elements(str_ordered)
+
+	openw,2,out_linelist,width=200
+	for i = 0L, n_total-1 do begin
+		printf,2,str_ordered[i]
+	endfor
+	close,2
+
+	stop
+
+end
+
+pro merge
+	merge_tio, 'kurucz_expanded.list', 'tio.dat', 'kurucz_plus_tio.list'
+	
+	merge_co, 'kurucz_expanded.list', 'coxx.asc', 'kurucz_plus_co.list'
+	merge_oh, 'kurucz_plus_co.list', 'ohnew.asc', 'kurucz_plus_co_oh.list'
+ 	spawn,'./make_index kurucz_plus_co_oh.list'
+end

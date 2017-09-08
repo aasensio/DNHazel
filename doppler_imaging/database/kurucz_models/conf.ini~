@@ -1,0 +1,19 @@
+# Configuration File
+
+#***********************************
+# General information
+#***********************************
+[General]
+Type of computation = 'INTENSITY'
+Number of heliocentric angles = 1
+Cosinus heliocentric angle = 1.0
+File with model atmosphere = 'MODEL/falc_100G.atm'
+File with output results = 'RESULTS/output'
+
+#***********************************
+# Information about regions
+#***********************************
+[Wavelength region]
+First wavelength = 6300
+Last wavelength = 6305
+Wavelength step = 0.05

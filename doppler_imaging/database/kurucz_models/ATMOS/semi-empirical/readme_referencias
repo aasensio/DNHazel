@@ -1,0 +1,91 @@
+MODEL ATMOSPHERE FILES TO BE USED WITH SIR
+
+Each model file contains the macroturbulent velocity (km/s), the
+filling factor (only to be used with two-component models, ranging
+from 0 to 1), and the stray light factor (in percent) in the first line.
+Then, eight columns follow:
+ 
+Column 1: log tau_5 (logarithm of the continuum optical depth at 5000 A)
+Column 2: Temperature (K)
+Column 3: Electron pressures (dyn/cm^2)
+Column 4: Microturbulent velocity (cm/s)
+Column 5: Magnetic field strength (G)
+Column 6: Line-of-sight velocity (cm/s)
+Column 7: Inclination angle of the magnetic field vector in deg 
+          from 0 (pointing to the observer) to 180 (pointing away from the
+          observer)
+Column 8: Azimuthal angle of the magnetic field vector in deg. 
+
+Note that electron pressure comes from hydrostatic equilibrium, and that
+microturbulent velocities are set to reasonable values (usually not given in 
+the original sources). Macroturbulence is seldomly given in the original
+sources (except for those models originating from the IAC inversion group).
+ 
+
+References for the models are as follow: 
+
+One-component quiet Sun models:
+
+  holmu0.mod ...  Holweger H., & Muller E.A., 1974, Sol Phys. 39 19
+
+  hsra.mod   ...  Harvard Smithsonian Reference Atmosphere (Gingerich O.,
+                  Noyes R.W., Kalkofen W., & Cuny Y., 1971. Sol. Phys. 18, 347)
+
+  valc.mod   ...  Vernaza J.E., Avrett E.H., & Loeser R., 1981, ApJS 45, 635
+
+  mackkl.mod ...  Maltby P., Avrett E.H., Carlsson M., Kjeldseth-Moe O.,
+                  Kurucz R.L., & Loeser R., 1986 ApJ 306 284
+
+  nelsoncold.mod  Nelson G. P. 1978 Sol. Phys. 60, 5
+
+  nelsonhot.mod   Nelson G. P. 1978 Sol. Phys. 60, 5
+
+  grevesse.mod .. Grevesse N., Sauval A.J. 1999 A&A 347, 348
+
+
+Two-component (granular and intergranular) models of the quiet Sun:
+
+
+  granulebbr.mod .. Borrero, J.M., \& Bellot Rubio, 2002, A\&A, 385, 1056
+  intergrbbr.mod .. Borrero, J.M., \& Bellot Rubio, 2002, A\&A, 385, 1056 
+
+
+  granulebrc.mod ...  B. Ruiz Cobo, J.C. del Toro Iniesta, I. Rodr\'\i guez 
+                   Hidalgo, M. Collados \& J. S\'anchez Almeida;  JOSO Annual 
+                   Report, 162 (1995)
+
+  intergrbrc.mod ...  B. Ruiz Cobo, J.C. del Toro Iniesta, I. Rodr\'\i guez 
+                   Hidalgo, M. Collados \& J. S\'anchez Almeida;  JOSO Annual 
+                   Report, 162 (1995)
+  
+
+Sunspot Models:
+
+  emaltby.mod .. (E model) Maltby P., Avrett E.H., Carlsson M., 
+                  Kjeldseth-Moe O., Kurucz R.L., & Loeser R., 1986 ApJ 306 284
+                 
+  mmaltby.mod ..  (M model) Maltby P., Avrett E.H., Carlsson M., 
+                  Kjeldseth-Moe O., Kurucz R.L., & Loeser R., 1986 ApJ 306 284
+                 
+
+  cool.mod ...    Collados M., Martínez Pillet V., Ruiz Cobo B., 
+                  Del Toro Iniesta J.C., & Vázquez M. 1994 A&A 291 622 
+                  (Umbral model for a big spot)
+
+  hot.mod  ...    Collados M., Martínez Pillet V., Ruiz Cobo B., 
+                  Del Toro Iniesta J.C., & Vázquez M. 1994 A&A 291 622 
+		  (Umbral model for a small spot)
+
+  penumjti.mod .. Del Toro Iniesta J.C., Tarbell T.D., Ruiz Cobo B., 
+                   1994, ApJ 436,400 
+		  (penumbral model)
+
+Active Regions Models:
+
+  solannt.mod ..  (network model, S. K. Solanki, private comunication)
+
+  solanpl.mod ..  (plage model, S. K. Solanki, private comunication)
+
+
+
+

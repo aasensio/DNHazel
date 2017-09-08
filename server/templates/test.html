@@ -1,0 +1,113 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="static/style2.css" />
+<title>Random number</title>
+<script type="text/javascript" src="static/socket.io.min.js"></script>
+<script type="text/javascript" src="static/jquery.min.js"></script>
+<script type="text/javascript" src="static/plotly-latest.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+function makePlotly( which, x, y ){
+  var plotDiv = document.getElementById("plot");
+  var traces = [{
+    x: x,
+    y: y
+  }];
+
+  var layout = {
+  title: 'Convergence '+which,
+  xaxis: {
+    type: 'linear',
+    autorange: true,
+    title: 'Epoch'
+  },
+  yaxis: {
+    type: 'log',
+    autorange: true,
+    title: 'Loss'
+  }
+};
+
+  Plotly.newPlot('plot_'+which, traces, layout);
+};
+
+$(document).ready(function() {
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+    socket.on('update', function(msg) {
+        var data_all = JSON.parse(msg.data);
+        var x = [], y = [];
+        var computers = {'vena': 'vena', 'duna': 'duna', 'delta': 'delta'};
+        var data = [];
+
+        
+        for (computer in computers) {
+            data[computer] = JSON.parse(data_all[computer]);
+        };
+
+        for (computer in computers) {
+            var x = [], y = [];
+
+            $('#messages_'+computer).empty();
+
+            for (i = 0; i < data[computer][1].length; i++) {
+                $('#messages_'+computer).append('<div class="row">' + data[computer][1][i][0] + ' loss= ' + data[computer][1][i][1] + '</div>');
+                x.push(i);
+                y.push(data[computer][1][i][1]['loss']);
+             };
+            makePlotly(computer, x, y);
+          console.log(data[computer]);
+
+            $('#starting_time_'+computer).empty();
+            $('#name_'+computer).empty();
+
+            $('#starting_time_'+computer).append('Starting time : ' + data[computer][0]['init_t']);
+            $('#name_'+computer).append('Starting time : ' + data[computer][0]['name']);
+            
+        };
+
+        
+
+        
+            
+        
+    });
+
+});
+
+
+</script>
+<div id="pagewrap">
+  
+  <div id="vena">
+    <div class="row" id="name_vena"></div>
+    <div class="row" id="starting_time_vena"></div>
+    <div class="row">
+      <div id="plot_vena" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    </div>
+    <div id="messages_vena"></div>
+  </div>
+
+  <div id="duna">
+    <div class="row" id="name_duna"></div>
+    <div class="row" id="starting_time_duna"></div>
+    <div class="row">
+      <div id="plot_duna" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    </div>
+    <div id="messages_duna"></div>
+  </div>
+
+  <div id="delta">
+    <div class="row" id="name_delta"></div>
+    <div class="row" id="starting_time_delta"></div>
+    <div class="row">
+      <div id="plot_delta" style="width: 480px; height: 400px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    </div>
+    <div id="messages_delta"></div>
+  </div>
+
+
+</body>
+</html>

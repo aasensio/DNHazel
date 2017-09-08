@@ -1,0 +1,1 @@
+{"model": "cnns/kmn", "epochs": 50, "action": "start", "ncenters": 50, "train_fraction": "0.8", "lr": 0.0001, "lr_multiplier": 1.0, "batch_size": 1024, "widths": [0.05, 0.1, 0.2, 0.3], "var": "tau"}

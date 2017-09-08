@@ -1,0 +1,1 @@
+{"model": "kmn_nets/kmn", "epochs": "50", "action": "start", "infer_sigma": "yes", "ncenters": 50, "train_fraction": 0.9, "lr": "5e-4", "lr_multiplier": 1.0, "batch_size": "512", "widths": [0.01, 0.02, 0.03], "var": "tau"}

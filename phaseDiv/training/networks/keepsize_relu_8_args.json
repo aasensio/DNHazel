@@ -1,0 +1,1 @@
+{"output": "networks/keepsize_relu", "epochs": "20", "noise": 0.0, "depth": "8", "kernels": "64", "action": "start", "model": "keepsize", "activation": "relu", "lr": "1e-4", "lr_multiplier": "0.98", "batchsize": "128"}

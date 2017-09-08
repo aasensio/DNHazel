@@ -1,0 +1,70 @@
+pro plot_spec, file
+	openr,2,file,/f77
+	n = 0L
+	readu,2,n
+
+	for i = 0, n-1 do begin
+		readu,2,n
+		temp1 = dblarr(n)
+		temp2 = dblarr(n)
+		readu,2,temp1, temp2
+		
+		if (i eq 0) then begin
+			freq = temp1
+			spec = temp2
+		endif else begin
+			freq = [freq, temp1]
+			spec = [[spec], [temp2]]
+		endelse
+	endfor
+
+	close,2
+
+	ind = reverse(sort(freq))
+
+	lambda = 2.99792458d18 / reform(freq[ind])
+	stI = reform(spec[ind])
+	
+	plot, lambda, stI
+	
+	stop
+end
+
+pro plot_zeeman, file
+
+	openr,2,file,/f77
+	n = 0L
+	readu,2,n
+
+	freq = [0]
+	spec = [0]
+
+	for i = 0, n-1 do begin
+		readu,2,n
+		temp1 = dblarr(n)
+		temp2 = dblarr(4,n)
+		readu,2,temp1, temp2
+
+		freq = [freq, temp1]
+		spec = [[spec], [temp2]]
+	endfor
+
+	close,2
+
+	ind = reverse(sort(freq))
+
+	lambda = 2.99792458d18 / reform(freq[ind])
+	stI = reform(spec[0,ind])
+	stQ = reform(spec[1,ind])
+	stU = reform(spec[2,ind])
+	stV = reform(spec[3,ind])
+
+	!p.multi = [0,2,2]
+	plot, lambda, stI
+	plot, lambda, stQ
+	plot, lambda, stU
+	plot, lambda, stV / stI
+	!p.multi = 0
+
+	stop
+end

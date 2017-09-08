@@ -1,0 +1,78 @@
+# Compiler 
+# ifort -> Intel Fortran
+# gfortran -> gfortran
+
+# The following lines are used to choose the compiler
+# We have tested gfortran and ifort
+# In case you want to use another compiler, use equivalent
+# keywords
+#  FLAGS -> is used to indicate that the preprocessor has to be invoked
+#  OPTIONS -> these are general compilation flags that, for the moment, only indicate
+#             that the object file is generated, without linking
+# It should be easy to find the equivalent flags in your compiler
+
+# gfortran (comment these lines if you want to use another compiler)
+#COMPILER = gfortran
+#FLAGS =
+#OPTIONS = -c -ffree-line-length-none
+ 
+# ifort (comment these lines if you want to use another compiler)
+# COMPILER = ifort
+# FLAGS = 
+# OPTIONS = -c
+
+# ifort (comment these lines if you want to use another compiler)
+COMPILER = mpif90 
+FLAGS = 
+OPTIONS = -c -O3 -traceback -g -check all
+#-fpe:0 -traceback -g -check all -fpstkchk
+OPTIONS_LINK =
+#-fpe:0 -traceback -g -check all -fpstkchk
+LIBS =  
+ 
+FINAL_EXECUTABLE = lte
+
+OBJECTS = vars.o maths.o types.o lte.o chemical.o background.o io.o mpi.o atomic.o partition.o
+lte: $(OBJECTS)
+	$(COMPILER) $(OBJECTS) $(OPTIONS_LINK) $(LIBS) -o $(FINAL_EXECUTABLE)
+	cp $(FINAL_EXECUTABLE) ../
+
+all:
+	make lte
+		
+clean: 
+	find . -maxdepth 2 -name "*.o" -delete ; find . -maxdepth 1 -name "*.mod" -delete ;
+	find . -maxdepth 1 -name "*.f90~" -delete ; find . -maxdepth 2 -name "*.a" -delete ;
+	find . -maxdepth 1 -name "lte" -delete
+	find ../ -maxdepth 2 -name "lte" -delete
+	
+vars.o: vars.f90 types.o
+	$(COMPILER) $(OPTIONS)  vars.f90
+
+maths.o: maths.f90 vars.o
+	$(COMPILER) $(OPTIONS)  maths.f90
+
+types.o: types.f90
+	$(COMPILER) $(OPTIONS)  types.f90
+
+lte.o: lte.f90 io.o mpi.o atomic.o
+	$(COMPILER) $(OPTIONS)  lte.f90
+
+chemical.o: chemical.f90
+	$(COMPILER) $(OPTIONS)  chemical.f90
+
+background.o: background.f90
+	$(COMPILER) $(OPTIONS)  background.f90
+
+io.o: io.f90 chemical.o vars.o types.o partition.o
+	$(COMPILER) $(OPTIONS)  io.f90
+
+mpi.o: mpi.f90 types.o
+	$(COMPILER) $(OPTIONS)  mpi.f90
+
+partition.o: partition.f90
+	$(COMPILER) $(OPTIONS)  partition.f90
+
+atomic.o: atomic.f90 types.o maths.o background.o
+	$(COMPILER) $(OPTIONS)  atomic.f90
+	

@@ -1,0 +1,1 @@
+python train.py --action=start --epochs=20 --output=networks/keepsize_reflect_elu --depth=10 --model=keepsize_reflect --activation=elu

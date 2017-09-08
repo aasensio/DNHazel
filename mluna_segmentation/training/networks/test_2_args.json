@@ -1,0 +1,1 @@
+{"output": "networks/test", "epochs": 10, "noise": 0.0, "depth": "2", "kernels": "32", "action": "start", "activation": "relu", "lr": "1e-3", "lr_multiplier": 0.96, "l2_regularization": "0.0", "batchsize": 32}

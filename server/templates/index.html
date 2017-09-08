@@ -1,0 +1,206 @@
+<html>
+<head>
+<link rel="stylesheet" type="text/css" href="static/style.css" />
+<title>GPU training</title>
+<script type="text/javascript" src="static/socket.io.min.js"></script>
+<script type="text/javascript" src="static/jquery.min.js"></script>
+<script type="text/javascript" src="static/plotly-latest.min.js"></script>
+</head>
+<body>
+<script type="text/javascript">
+
+function makePlotly( which, x, y, x_batch, y_batch, x_val, y_val, x_lr, y_lr, time ){
+  var plotDiv = document.getElementById("plot");
+
+  var trace_loss = {
+    x: x,
+    y: y,
+    xaxis: 'x',
+    yaxis: 'y',
+    text: time,
+    textposition: 'top',
+    type: 'scatter',
+    mode: 'lines',
+    name: 'Training',
+    line: {
+      color: 'rgb(219, 64, 82)',
+      width: 3
+    }
+  };
+
+  var trace_validation = {
+    x: x_val,
+    y: y_val,
+    xaxis: 'x',
+    yaxis: 'y',
+    text: time,
+    textposition: 'top',
+    type: 'scatter',
+    mode: 'lines',
+    name: 'Validation',
+    line: {
+      color: 'rgb(55, 128, 191)',
+      width: 3
+    }
+  };
+
+  var trace_lr = {
+    x: x_lr,
+    y: y_lr,
+    xaxis: 'x',
+    yaxis: 'y',
+    text: time,
+    textposition: 'top',
+    type: 'scatter',
+    mode: 'lines',
+    name: 'LR',
+    line: {
+      color: 'rgb(155, 128, 191)',
+      width: 3
+    }
+  };
+
+
+  var trace_loss_batch = {
+    x: x_batch,
+    y: y_batch,
+    xaxis: 'x2',
+    yaxis: 'y2',
+    text: time,
+    textposition: 'top',
+    type: 'scatter',
+    mode: 'lines',
+    name: 'Training batch',
+    line: {
+      color: 'rgb(29, 147, 49)',
+      width: 3
+    }
+  };
+
+  var layout = {
+    title: 'Convergence '+which,
+    xaxis: {
+      domain: [0,1],
+      type: 'linear',
+      autorange: true,
+      title: 'Epoch',
+      anchor: 'x'
+    },
+    yaxis: {
+      domain: [0,0.45],
+      type: 'log',
+      autorange: true,
+      title: 'Loss',
+      anchor: 'y'
+    },
+    xaxis2: {
+      domain: [0,1],
+      type: 'linear',
+      autorange: true,
+      title: 'Iteration',
+      anchor: 'y2'
+    },
+    yaxis2: {
+      domain: [0.55,1],
+      type: 'log',
+      autorange: true,
+      title: 'Loss'
+    },
+    showlegend: true,
+    legend: {"orientation": "h"}
+  };
+
+  var data = [trace_loss, trace_validation, trace_lr, trace_loss_batch];
+
+  Plotly.newPlot('plot_'+which, data, layout);
+};
+
+$(document).ready(function() {
+	var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+	socket.on('update', function(msg) {
+        var data_all = JSON.parse(msg.data);        
+        var computers = {'viga': 'viga', 'duna': 'duna', 'delta': 'delta'};
+        var data = [];
+        var data_batch = [];
+
+        
+        for (computer in computers) {
+        	data[computer] = JSON.parse(data_all[computer]);
+          data_batch[computer] = JSON.parse(data_all[computer+'_batch']);
+       	};
+
+       	for (computer in computers) {
+       		var x = [], y = [], x_batch = [], y_batch = [], x_val = [], y_val = [], x_lr = [], y_lr = [], time = [];
+       		
+	       	for (i = 0; i < data[computer].length-1; i++) {		        
+		        x.push(i);
+		        y.push(data[computer][i+1][1]);
+
+            x_val.push(i);
+            y_val.push(data[computer][i+1][2]);
+
+            x_lr.push(i);
+            y_lr.push(data[computer][i+1][3]);
+
+            time.push(data[computer][i+1][0]);
+		     };
+
+         for (i = 0; i < data_batch[computer].length-1; i++) {           
+            x_batch.push(i);
+            y_batch.push(data_batch[computer][i+1][1]);
+
+            // time.push(data[computer][1][i][0]);
+         };
+
+	       makePlotly(computer, x, y, x_batch, y_batch, x_val, y_val, x_lr, y_lr, time);          
+
+			$('#starting_time_'+computer).empty();
+	    	$('#name_'+computer).empty();
+
+	    	$('#starting_time_'+computer).append('Starting time : ' + data[computer][0]['init_t']);
+	    	$('#name_'+computer).append('Starting time : ' + data[computer][0]['name']);
+			
+	    };
+
+	    
+    });
+
+});
+
+
+</script>
+<div class="container">
+  
+  <div class="col">
+    <div class="row" id="name_viga"></div>
+    <div class="row" id="starting_time_viga"></div>
+    <div class="row">
+      <div id="plot_viga" style="width: 580px; height: 800px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    </div>
+    <!-- <div id="messages_vena"></div> -->
+  </div>
+
+  <div class="col">
+    <div class="row" id="name_duna"></div>
+    <div class="row" id="starting_time_duna"></div>
+    <div class="row">
+      <div id="plot_duna" style="width: 580px; height: 800px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    </div>
+    <!-- <div id="messages_duna"></div> -->
+  </div>
+
+  <div class="col">
+    <div class="row" id="name_delta"></div>
+    <div class="row" id="starting_time_delta"></div>
+    <div class="row">
+      <div id="plot_delta" style="width: 580px; height: 800px;"><!-- Plotly chart will be drawn inside this DIV --></div>
+    </div>
+    <!-- <div id="messages_delta"></div> -->
+  </div>
+
+</div>
+
+
+</body>
+</html>

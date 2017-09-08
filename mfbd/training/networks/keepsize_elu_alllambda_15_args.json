@@ -1,0 +1,1 @@
+{"output": "networks/keepsize_elu_alllambda", "epochs": "20", "noise": 0.0, "depth": "15", "kernels": "64", "action": "start", "model": "keepsize", "activation": "elu", "lr": "3e-4", "lr_multiplier": "0.98", "batchsize": "32"}

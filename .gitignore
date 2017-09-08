@@ -1,3 +1,17 @@
+*.hdf5
+*.h5
+*.save
+*.db
+*.idl
+*.pkl
+*.npy
+*.npz
+*.list
+*.jpeg
+*.jpg
+*.mp4
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
