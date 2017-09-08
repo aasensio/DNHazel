@@ -68,7 +68,8 @@ class network_optical_flow(nn.Module):
         self.C64 = ConvBlock(64, 64)
         
         self.C71 = ConvBlock(64, 64, stride=2, upsample=True)
-        self.C72 = ConvBlock(64, 2)
+
+        self.C72 = nn.Conv2d(64, 2, kernel_size=1)
         
     def forward(self, x):
         A01 = self.A01(x)

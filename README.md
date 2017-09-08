@@ -1,2 +1,3 @@
-# DNHazel
-Deep network Hazel version
+# All my Deep Learning projects 
+
+This repository contains all my deep learning projects. Feel free to wander around.

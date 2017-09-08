@@ -123,4 +123,4 @@ class optical_flow(object):
         self.loss_val.append(test_loss)
 
 optical_flow_network = optical_flow(32)
-optical_flow_network.optimize(50, lr=1e-3)
+optical_flow_network.optimize(5, lr=1e-4)
